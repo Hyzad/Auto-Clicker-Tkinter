@@ -231,7 +231,8 @@ class Auto(tk.Tk):
             return False
 
     # will draw a transparent window on the screen that listens for a mouse click then inserts it into 
-    # does it need to be a new window or just a listener? ye draw a window that says to click to set the coordinates
+    # does it need to be a new window or just a listener? no apparently 
+    # todo 
     def mouse_getpos(self):
         self.get_pos_button = not self.get_pos_button
         def click_func():
@@ -244,10 +245,6 @@ class Auto(tk.Tk):
                 self.get_pos_button = not self.get_pos_button
         mouse.on_click(click_func)
 
-            
-
-
-        
 
 
 
