@@ -12,13 +12,12 @@ class Auto(tk.Tk):
         super().__init__()
         self.geometry('700x300')
         self.title("Billio Nar's Mouse Utility Tool")
-
         self.rng = random.default_rng()
-        #self.frame = ttk.Frame(self)
 
         self.start_off = 'Start'
         self.start_on = 'Stop'
         self.clicking = False
+        self.get_pos_button = False
 
         self.fixed_mouse = False
 
@@ -29,7 +28,7 @@ class Auto(tk.Tk):
         self.create_inputs()
         self.keybind_start()
 
-        
+    # function that creates all the inputs 
     def create_inputs(self):
         self.frame = ttk.Frame(self)
         self.frame.pack(padx=10, pady=10, fill='x')
@@ -80,20 +79,39 @@ class Auto(tk.Tk):
             self.frame, text=self.default_text, command=self.keybind_clicked)
         self.keybind_button.grid(column=3, row=2, pady=10, padx=10)
         
+        # frame containing position widgets
         self.mouse_frame = ttk.Frame(self.frame)
         self.mouse_frame.grid(column=0, row=3, columnspan=2, sticky='W')
 
-        self.mouse_label = ttk.Label(self.mouse_frame, text='Set Mouse Position')
-        self.mouse_check_label = ttk.Label(self.mouse_frame, text='Lock Mouse?')
-        self.mouse_checkbutton = tk.Checkbutton(self.mouse_frame, command=None, onvalue=1, offvalue=0)
-        self.mouse_check_label.grid(column=0, row=0)
-        self.mouse_checkbutton.grid(column=1, row=0)
-        self.mouse_label.grid(column=2, row=0)
-        self.mouse_pos_button = ttk.Button(
-            self.mouse_frame, text='', command=None
-        )
-        self.mouse_pos_button.grid(column=3, row=0, pady=10, padx=10)
+        # label and check box for using mouse pos
+        self.mouse_checklabel = ttk.Label(self.mouse_frame, text='Use Coords?')
+        self.mouse_checkvar = tk.IntVar()
+        self.mouse_checkbutton = tk.Checkbutton(self.mouse_frame, variable=self.mouse_checkvar, command=None, onvalue=1, offvalue=0)
 
+        # widgets for x and y coords
+        self.mouse_xlabel = ttk.Label(self.mouse_frame, text='x:')
+        self.mouse_xtext = tk.StringVar()
+        self.mouse_xcoord = ttk.Entry(
+            self.mouse_frame, textvariable=self.mouse_xtext, width=5, validate='all', validatecommand=self.validate_cmd)
+        self.mouse_ylabel = ttk.Label(self.mouse_frame, text='y:')
+        self.mouse_ytext = tk.StringVar()
+        self.mouse_ycoord = ttk.Entry(
+            self.mouse_frame, textvariable=self.mouse_ytext, width=5, validate='all', validatecommand=self.validate_cmd)
+        # button to set mouse coords
+        self.mouse_pos_button = ttk.Button(
+            self.mouse_frame, text='Get Coords', command=self.mouse_getpos)
+
+        # puts all 
+        self.mouse_checklabel.grid(column=0, row=0)
+        self.mouse_checkbutton.grid(column=1, row=0)
+        self.mouse_pos_button.grid(column=2, row=0, pady=10, padx=10)
+        self.mouse_xlabel.grid(column=3, row=0)
+        self.mouse_xcoord.grid(column=4, row=0)
+        self.mouse_ylabel.grid(column=5, row=0)
+        self.mouse_ycoord.grid(column=6, row=0)
+        
+
+        # start button
         self.start_button = ttk.Button(self.frame, text=self.start_off, command=self.start_clicked)
         self.start_button.grid(column=3, row=3, pady=10, padx=10)
 
@@ -110,6 +128,13 @@ class Auto(tk.Tk):
             self.min_down_box.insert(0, 20)
         if not self.max_down_box.get():
             self.max_down_box.insert(0, 35)
+        
+
+        if self.mouse_checkvar.get() == 1 and self.mouse_xcoord.get() and self.mouse_ycoord.get() and self.clicking == False:
+            x = self.mouse_xcoord.get()
+            y = self.mouse_ycoord.get()
+            mouse.move(x, y)
+        
         
         dur_check = self.duration_box.get().isnumeric()
         max_click_check = self.max_click_box.get().isnumeric()
@@ -198,11 +223,33 @@ class Auto(tk.Tk):
 
         return self.rng.integers(self.min_time, self.max_time, self.array_length)/1000
     
+    # only allows numbers to be written in boxes
     def validate_input(self, value):
         if value.isdigit() or value == "":
             return True
         else:
             return False
+
+    # will draw a transparent window on the screen that listens for a mouse click then inserts it into 
+    # does it need to be a new window or just a listener? ye draw a window that says to click to set the coordinates
+    def mouse_getpos(self):
+        self.get_pos_button = not self.get_pos_button
+        def click_func():
+            mouse_pos = mouse.get_position()
+            x = str(mouse_pos[0])
+            y = str(mouse_pos[1])
+            if self.get_pos_button == True:
+                self.mouse_xcoord.insert(0, x)
+                self.mouse_ycoord.insert(0, y)
+                self.get_pos_button = not self.get_pos_button
+        mouse.on_click(click_func)
+
+            
+
+
+        
+
+
 
 
 # starts the program
