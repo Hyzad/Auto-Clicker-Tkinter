@@ -155,7 +155,7 @@ class Auto(tk.Tk):
         else:
             messagebox.showerror('ERROR','TIME MUST BE A NUMBER')
 
-    # the clicker 
+    # function that is responsible for clicking
     def clicking_loop(self):
         click_times = self.random_array(self.min_click_box, self.max_click_box)
         down_times = self.random_array(self.min_down_box, self.max_down_box)
@@ -176,6 +176,7 @@ class Auto(tk.Tk):
                 if self.clicking == False:
                     break
                 mouse.release(button='left')
+                
     # starts listening for key clicks when the keybind set button is pressed
     def keybind_clicked(self):
         listener = keyboard.Listener(
@@ -232,7 +233,7 @@ class Auto(tk.Tk):
 
     # will draw a transparent window on the screen that listens for a mouse click then inserts it into 
     # does it need to be a new window or just a listener? no apparently 
-    # todo 
+
     def mouse_getpos(self):
         self.get_pos_button = not self.get_pos_button
         def click_func():
@@ -244,7 +245,6 @@ class Auto(tk.Tk):
                 self.mouse_ycoord.insert(0, y)
                 self.get_pos_button = not self.get_pos_button
         mouse.on_click(click_func)
-
 
 
 
